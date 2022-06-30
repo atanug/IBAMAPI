@@ -69,5 +69,52 @@ namespace IBAM.API
                 return new NotFoundResult();  
             }  
         }
+
+        [FunctionName("CreateMember")]  
+        public static async Task<IActionResult> CreateMember(  
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "members")] HttpRequest req, ILogger log)  
+        {  
+            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();  
+            var input = JsonConvert.DeserializeObject<CreateMember>(requestBody);  
+            try  
+            {  
+                using (SqlConnection connection = new SqlConnection(Environment.GetEnvironmentVariable("SqlConnectionString")))  
+                {  
+                    connection.Open();  
+                    if(! String.IsNullOrEmpty(input.FirstName))  
+                    {  
+                        var query = @"INSERT INTO [Members] (FirstName,LastName,StreetAddress1, StreetAddress2,
+                        City, StateId, CountryId, PostalCode, PhoneNumber, EmailAddress, CreatedOn, 
+                        UpdatedOn) VALUES(@FirstName, @LastName , @StreetAddress1,@StreetAddress2,
+                        @City,@StateId,@CountryId,@PostalCode,@PhoneNumber,@EmailAddress,getdate(),getdate())"; 
+
+                        SqlCommand dbCommand = new SqlCommand(query, connection); 
+
+                        dbCommand.Parameters.Add(new SqlParameter("@FirstName", input.FirstName)); 
+                        dbCommand.Parameters.Add(new SqlParameter("@LastName", input.LastName));
+                        dbCommand.Parameters.Add(new SqlParameter("@StreetAddress1", input.StreetAddress1));
+                        dbCommand.Parameters.Add(new SqlParameter("@StreetAddress2", input.StreetAddress2));
+                        dbCommand.Parameters.Add(new SqlParameter("@City", input.City));
+                        dbCommand.Parameters.Add(new SqlParameter("@StateId", input.StateId));
+                        dbCommand.Parameters.Add(new SqlParameter("@CountryId", input.CountryId));
+                        dbCommand.Parameters.Add(new SqlParameter("@PostalCode", ""));
+                        dbCommand.Parameters.Add(new SqlParameter("@PhoneNumber", input.PhoneNumber)); 
+                        dbCommand.Parameters.Add(new SqlParameter("@EmailAddress", input.EmailAddress));        
+
+                        log.LogError(query);
+                         
+                        dbCommand.ExecuteNonQuery();  
+                    }  
+                }  
+            }  
+            catch (Exception e)  
+            {  
+                log.LogError(e.ToString());  
+                return new BadRequestResult();  
+            }  
+            return new OkResult();  
+        }  
     }
+
+
 }
