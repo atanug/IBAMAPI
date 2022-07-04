@@ -7,6 +7,9 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
 
 using System.Collections.Generic;
 using System.Data;
@@ -52,8 +55,8 @@ namespace IBAM.API.Functions
             catch (Exception e)  
             {  
                 log.LogError(e.ToString());  
-                return new HttpResponseException(e.ToString(), HttpStatusCode.BadRequest)
-                //return new BadRequestResult();  
+                //return new HttpResponseException(new HttpResponseMessage(e.ToString(), HttpStatusCode.BadRequest));
+                return new BadRequestResult();  
             }  
             return new OkResult();  
         } 
