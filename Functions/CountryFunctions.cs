@@ -52,7 +52,8 @@ namespace IBAM.API.Functions
             catch (Exception e)  
             {  
                 log.LogError(e.ToString());  
-                return new BadRequestResult();  
+                return new HttpResponseException(e.ToString(), HttpStatusCode.BadRequest)
+                //return new BadRequestResult();  
             }  
             return new OkResult();  
         } 
