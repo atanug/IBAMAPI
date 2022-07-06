@@ -82,7 +82,7 @@ namespace IBAM.API.Functions
         
         [FunctionName("GetMembers")]
         public  async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "members/KEY/{keyword}")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "members/KEY/{keyword}")] HttpRequest req,
             ILogger log, string keyword)
         {
             
