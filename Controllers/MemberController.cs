@@ -1,6 +1,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Collections.Generic;
 
 using IBAM.API.Data;
 using IBAM.API.Models;
@@ -22,10 +23,11 @@ namespace IBAM.API.Controllers{
 
         }
 
-        public Country GetByCountryName(String countryName){
-            
-            return _context.Countries.Where(b => b.CountryName == countryName).FirstOrDefault();
-            
+        public List<Member> GetMembers(string keyword){
+
+            return _context.Members
+                .Where(p => p.FirstName.ToLower().Contains(keyword) ||
+                 p.LastName.ToLower().Contains(keyword)).ToList();
         }
 
     }

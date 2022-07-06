@@ -28,6 +28,12 @@ namespace IBAM.API.Controllers{
             
         }
 
+        public Country GetById(int countryId){
+            
+            return _context.Countries.Where(b => b.CountryId == countryId).FirstOrDefault();
+            
+        }
+
     }
 
 }

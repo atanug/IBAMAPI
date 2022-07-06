@@ -26,6 +26,10 @@ namespace IBAM.API.Controllers{
             return _context.States.Where(b=>b.StateName==stateName).FirstOrDefault();
         }
 
+        public State getById(int stateId){
+            return _context.States.Where(b=>b.StateId==stateId).FirstOrDefault();
+        }
+
     }
 
 }

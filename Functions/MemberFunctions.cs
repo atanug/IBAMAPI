@@ -80,9 +80,63 @@ namespace IBAM.API.Functions
             return new OkResult();  
         }  
         
+        [FunctionName("GetMembers")]
+        public  async Task<IActionResult> Run(
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "members/KEY/{keyword}")] HttpRequest req,
+            ILogger log, string keyword)
+        {
+            
+
+            List<MemberReq> MemberList = new List<MemberReq>();  
+            try  
+            {  
+                MemberController _controller = new MemberController(_context);
+                
+
+                foreach (Member member in _controller.GetMembers(keyword))
+                {
+
+                     CountryController _countryController = new CountryController(_context);
+                     Country country = _countryController.GetById(member.CountryId);
+
+                    StateController _stateController = new StateController(_context);
+                    State state = _stateController.getById(member.MemberId);
+
+                    MemberReq memberReq = new MemberReq{
+                        MemberId = member.MemberId,
+                        FirstName=member.FirstName,
+                        LastName=member.LastName,
+                        StreetAddress1 = member.StreetAddress1,
+                        StreetAddress2 = member.StreetAddress2,
+                        City = member.City,
+                        PostalCode = member.PostalCode,
+                        EmailAddress = member.EmailAddress,
+                        PhoneNumber = member.PhoneNumber,
+                        StateName = state.StateName,
+                        CountryName=country.CountryName     
+                    };
+
+                    MemberList.Add(memberReq);
+                }
+            }  
+            catch (Exception e)  
+            {  
+                log.LogError(e.ToString());  
+            }  
+            if(MemberList.Count > 0)  
+            {  
+                return new OkObjectResult(MemberList);  
+            }  
+            else  
+            {  
+                return new NotFoundResult();  
+            }  
+        }
+
     }
 
      class MemberReq{
+        public int MemberId {get;set;}
         public string FirstName { get; set; }  
         public string LastName{get;set;}
         public string StreetAddress1{get;set;}
