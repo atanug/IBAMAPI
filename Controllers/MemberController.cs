@@ -17,9 +17,10 @@ namespace IBAM.API.Controllers{
             this._context = _context;
         }
 
-        public void AddMember(Member member){
+        public int AddMember(Member member){
             _context.Members.Add(member);
             _context.SaveChanges();
+            return member.MemberId;
 
         }
 
@@ -28,6 +29,10 @@ namespace IBAM.API.Controllers{
             return _context.Members
                 .Where(p => p.FirstName.ToLower().Contains(keyword) ||
                  p.LastName.ToLower().Contains(keyword)).ToList();
+        }
+
+        public Member GetMemberById(int memberId){
+            return _context.Members.Where(b=>b.MemberId==memberId).FirstOrDefault();
         }
 
     }

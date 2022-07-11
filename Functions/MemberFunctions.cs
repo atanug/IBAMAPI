@@ -40,7 +40,7 @@ namespace IBAM.API.Functions
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();  
             var input = JsonConvert.DeserializeObject<MemberReq>(requestBody); 
             log.LogError(requestBody);
-
+            int memberId = 0;
             try  
             {  
 
@@ -60,28 +60,25 @@ namespace IBAM.API.Functions
                     StateId=state.StateId,
                     CountryId=country.CountryId,
                     PhoneNumber=input.PhoneNumber,
-                    EmailAddress=input.EmailAddress,
-                
+                    EmailAddress=input.EmailAddress,                
                     
                     CreatedOn=System.DateTime.Now,
                     UpdatedOn=System.DateTime.Now};
 
                 MemberController _controller = new MemberController(_context);
-                _controller.AddMember(member);
+                 memberId = _controller.AddMember(member);
 
-            
-  
             }  
             catch (Exception e)  
             {  
                 log.LogError(e.ToString());  
                 return new BadRequestResult();  
             }  
-            return new OkResult();  
+            return new OkObjectResult(new { id=memberId}); ;  
         }  
         
         [FunctionName("GetMembers")]
-        public  async Task<IActionResult> Run(
+        public  async Task<IActionResult> GetMembers(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "members/KEY/{keyword}")] HttpRequest req,
             ILogger log, string keyword)
         {
@@ -126,6 +123,57 @@ namespace IBAM.API.Functions
             if(MemberList.Count > 0)  
             {  
                 return new OkObjectResult(MemberList);  
+            }  
+            else  
+            {  
+                return new NotFoundResult();  
+            }  
+        }
+
+        [FunctionName("GetMemberById")]
+        public  async Task<IActionResult> GetMemberById(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "members/{id}")] HttpRequest req,
+            ILogger log, int id)
+        {
+            
+            MemberReq memberReq = new MemberReq();
+            
+            try  
+            {  
+                MemberController _controller = new MemberController(_context);
+
+                Member member = _controller.GetMemberById(id);
+
+                if (member!=null){
+
+                CountryController _countryController = new CountryController(_context);
+                Country country = _countryController.GetById(member.CountryId);
+
+                StateController _stateController = new StateController(_context);
+                State state = _stateController.getById(member.MemberId);
+
+                
+                    memberReq.MemberId = member.MemberId;
+                    memberReq.FirstName=member.FirstName;
+                    memberReq.LastName=member.LastName;
+                    memberReq.StreetAddress1 = member.StreetAddress1;
+                    memberReq.StreetAddress2 = member.StreetAddress2;
+                    memberReq.City = member.City;
+                    memberReq.PostalCode = member.PostalCode;
+                    memberReq.EmailAddress = member.EmailAddress;
+                    memberReq.PhoneNumber = member.PhoneNumber;
+                    memberReq.StateName = state.StateName;
+                    memberReq.CountryName=country.CountryName;         
+                }
+  
+            }  
+            catch (Exception e)  
+            {  
+                log.LogError(e.ToString());  
+            }  
+            if(memberReq!=null)  
+            {  
+                return new OkObjectResult(memberReq);  
             }  
             else  
             {  
