@@ -25,6 +25,7 @@ namespace IBAM.API.Controllers{
         }
 
         public List<Member> GetMembers(string keyword){
+           
 
             return _context.Members
                 .Where(p => p.FirstName.ToLower().Contains(keyword) ||

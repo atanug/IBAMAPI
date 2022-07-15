@@ -97,7 +97,7 @@ namespace IBAM.API.Functions
                      Country country = _countryController.GetById(member.CountryId);
 
                     StateController _stateController = new StateController(_context);
-                    State state = _stateController.getById(member.MemberId);
+                    State state = _stateController.getById(member.StateId);
 
                     MemberReq memberReq = new MemberReq{
                         MemberId = member.MemberId,
@@ -150,7 +150,7 @@ namespace IBAM.API.Functions
                 Country country = _countryController.GetById(member.CountryId);
 
                 StateController _stateController = new StateController(_context);
-                State state = _stateController.getById(member.MemberId);
+                State state = _stateController.getById(member.StateId);
 
                 
                     memberReq.MemberId = member.MemberId;
