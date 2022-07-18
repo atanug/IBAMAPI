@@ -7,6 +7,7 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System.Net;
 
 using System.Collections.Generic;
 using System.Data;
@@ -18,6 +19,7 @@ using Microsoft.EntityFrameworkCore;
 using IBAM.API.Models;
 using IBAM.API.Data;
 using IBAM.API.Controllers;
+using IBAM.API.Helper;
 
 
 namespace IBAM.API.Functions
@@ -72,7 +74,7 @@ namespace IBAM.API.Functions
             catch (Exception e)  
             {  
                 log.LogError(e.ToString());  
-                return new BadRequestResult();  
+                return ErrorResponse.BadRequest(type:"createmember",detail:"Error Creating Member. Please contact system adminstrator."); 
             }  
             return new OkObjectResult(new { id=memberId}); ;  
         }  
@@ -118,7 +120,8 @@ namespace IBAM.API.Functions
             }  
             catch (Exception e)  
             {  
-                log.LogError(e.ToString());  
+                log.LogError(e.ToString());
+                return ErrorResponse.InternalServerError(detail:"Internal Server Error. Please Contact System Adminstrator"); 
             }  
             if(MemberList.Count > 0)  
             {  
@@ -126,7 +129,7 @@ namespace IBAM.API.Functions
             }  
             else  
             {  
-                return new NotFoundResult();  
+                return ErrorResponse.NotFound(type: "/notfound",detail:"Member Not Found");  
             }  
         }
 
@@ -165,11 +168,16 @@ namespace IBAM.API.Functions
                     memberReq.StateName = state.StateName;
                     memberReq.CountryName=country.CountryName;         
                 }
+                else{
+                    return ErrorResponse.NotFound(type: "invalid_member_id",detail:"Member Not Found");
+                      
+                }
   
             }  
             catch (Exception e)  
             {  
                 log.LogError(e.ToString());  
+                return ErrorResponse.InternalServerError(detail:"Internal Server Error. Please Contact System Adminstrator");
             }  
             if(memberReq!=null)  
             {  
@@ -177,9 +185,11 @@ namespace IBAM.API.Functions
             }  
             else  
             {  
-                return new NotFoundResult();  
+                return ErrorResponse.NotFound(type: "invalid_member_id",detail:"Member Not Found"); 
             }  
         }
+
+        
 
     }
 

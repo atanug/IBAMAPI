@@ -17,6 +17,8 @@ namespace IBAM.API
             string connectionString = Environment.GetEnvironmentVariable("SqlConnectionString");
             builder.Services.AddDbContext<IBAM.API.Data.DataContext>(
               options => SqlServerDbContextOptionsExtensions.UseSqlServer(options, connectionString));
+
+              
         }
     }
 }
