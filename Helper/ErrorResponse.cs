@@ -50,5 +50,14 @@ public class ErrorResponse
     {
         return CreateResponse(HttpStatusCode.NotFound, type, title, detail, instance);
     }
+
+    public static ObjectResult UnAuthorized(
+        string type,
+        string title = "",
+        string detail = "",
+        string instance = "")
+    {
+        return CreateResponse(HttpStatusCode.Unauthorized, type, title, detail, instance);
+    }
 }
 }
