@@ -48,7 +48,8 @@ namespace IBAM.API.Functions
 
                 UserController _controller = new UserController(_context);
                 User user = _controller.GetByUserEmail(input.UserEmail);
-                _response = new AuthenticateResponse(user,"12345");
+                string token = JWTTokenGenerator.GenerateToken(user);
+                _response = new AuthenticateResponse(user,token);
 
             }  
             catch (Exception e)  

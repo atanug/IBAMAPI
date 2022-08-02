@@ -79,12 +79,20 @@ namespace IBAM.API.Functions
             return new OkObjectResult(new { id=memberId}); ;  
         }  
         
+        
         [FunctionName("GetMembers")]
         public  async Task<IActionResult> GetMembers(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "members/KEY/{keyword}")] HttpRequest req,
             ILogger log, string keyword)
         {
             
+            // Check if we have authentication info.
+            AuthenticationInfo auth = new AuthenticationInfo(req);
+        
+            if (!auth.IsValid)
+            {
+                return ErrorResponse.UnAuthorized(type:"authorization",detail:"Permission Denied"); 
+            }
 
             List<MemberReq> MemberList = new List<MemberReq>();  
             try  
