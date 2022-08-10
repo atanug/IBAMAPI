@@ -59,7 +59,7 @@ namespace IBAM.API.Functions
                 Country country = _countryController.GetByCountryName(input.CountryName);
 
                 StateController _stateController = new StateController(_context);
-                State state = _stateController.getByStateName(input.StateName);
+                State state = _stateController.GetByStateName(input.StateName);
 
                 Member member = new Member{
                     FirstName=input.FirstName,
@@ -150,6 +150,61 @@ namespace IBAM.API.Functions
             }  
         }
 
+        [FunctionName("UpdateMember")]  
+        public async Task<IActionResult> UpdateMember(  
+            [HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "members/{id}")] HttpRequest req, 
+            ILogger log, int id)  
+        {  
+
+            // Check if we have authentication info.
+            AuthenticationInfo auth = new AuthenticationInfo(req);
+        
+            if (!auth.IsValid)
+            {
+                return ErrorResponse.UnAuthorized(type:"authorization",detail:"Permission Denied"); 
+            }
+
+            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();  
+            var input = JsonConvert.DeserializeObject<MemberReq>(requestBody); 
+
+            MemberController _membercontroller = new MemberController(_context);
+            CountryController _countryController = new CountryController(_context);
+            StateController _stateController = new StateController(_context);
+            Member member = new Member();
+            MemberReq resp = new MemberReq();
+
+            try{
+                 member = _membercontroller.GetMemberById(id);
+
+                Country country = _countryController.GetByCountryName(input.CountryName);
+                State state = _stateController.GetByStateName(input.StateName);
+
+                member.FirstName=input.FirstName;
+                    member.LastName = input.LastName;
+                    member.StreetAddress1=input.StreetAddress1;
+                    member.StreetAddress2=input.StreetAddress2;
+                    member.City=input.City;
+                    member.PostalCode=input.PostalCode;
+                    member.StateId=state.StateId;
+                    member.CountryId=country.CountryId;
+                    member.PhoneNumber=input.PhoneNumber;
+                    member.EmailAddress=input.EmailAddress;                
+                    member.UpdatedOn=System.DateTime.Now;
+
+                    _membercontroller.UpdateMember(member);
+
+                    resp = ConvertFromMember(member,country,state);
+            }  
+            catch (Exception e)  
+            {  
+                log.LogError(e.ToString());  
+                return ErrorResponse.BadRequest(type:"updatemember",detail:"Error Updating Member. Please contact system adminstrator."); 
+            }  
+            return new OkObjectResult(resp);
+        }
+
+
+
         [FunctionName("GetMemberById")]
         public  async Task<IActionResult> GetMemberById(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "members/{id}")] HttpRequest req,
@@ -180,17 +235,7 @@ namespace IBAM.API.Functions
                 State state = _stateController.getById(member.StateId);
 
                 
-                    memberReq.MemberId = member.MemberId;
-                    memberReq.FirstName=member.FirstName;
-                    memberReq.LastName=member.LastName;
-                    memberReq.StreetAddress1 = member.StreetAddress1;
-                    memberReq.StreetAddress2 = member.StreetAddress2;
-                    memberReq.City = member.City;
-                    memberReq.PostalCode = member.PostalCode;
-                    memberReq.EmailAddress = member.EmailAddress;
-                    memberReq.PhoneNumber = member.PhoneNumber;
-                    memberReq.StateName = state.StateName;
-                    memberReq.CountryName=country.CountryName;         
+                    memberReq = ConvertFromMember(member, country,state);        
                 }
                 else{
                     return ErrorResponse.NotFound(type: "invalid_member_id",detail:"Member Not Found");
@@ -213,11 +258,35 @@ namespace IBAM.API.Functions
             }  
         }
 
-        
+        private MemberReq ConvertFromMember(Member member, Country country, State state)
+        {
+            MemberReq req = new MemberReq();
+
+            
+                req.MemberId = member.MemberId;
+                req.FirstName=member.FirstName;
+                req.LastName=member.LastName;
+                req.StreetAddress1 = member.StreetAddress1;
+                req.StreetAddress2 = member.StreetAddress2;
+                req.City = member.City;
+                req.PostalCode = member.PostalCode;
+                req.EmailAddress = member.EmailAddress;
+                req.PhoneNumber = member.PhoneNumber;
+                req.StateName = state.StateName;
+                req.CountryName=country.CountryName; 
+
+                return req;
+        } 
 
     }
 
-     class MemberReq{
+     public class MemberReq{
+
+        public MemberReq(){
+
+        }
+        
+        
         public int MemberId {get;set;}
         public string FirstName { get; set; }  
         public string LastName{get;set;}

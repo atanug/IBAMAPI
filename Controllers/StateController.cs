@@ -22,7 +22,7 @@ namespace IBAM.API.Controllers{
 
         }
 
-        public State getByStateName(String stateName){
+        public State GetByStateName(String stateName){
             return _context.States.Where(b=>b.StateName==stateName).FirstOrDefault();
         }
 
