@@ -129,7 +129,8 @@ namespace IBAM.API.Functions
                         EmailAddress = member.EmailAddress,
                         PhoneNumber = member.PhoneNumber,
                         StateName = state.StateName,
-                        CountryName=country.CountryName     
+                        CountryName=country.CountryName ,
+                        IsActiveMember=member.IsActiveMember,    
                     };
 
                     MemberList.Add(memberReq);
@@ -274,6 +275,7 @@ namespace IBAM.API.Functions
                 req.PhoneNumber = member.PhoneNumber;
                 req.StateName = state.StateName;
                 req.CountryName=country.CountryName; 
+                req.IsActiveMember = member.IsActiveMember;
 
                 return req;
         } 
@@ -302,6 +304,7 @@ namespace IBAM.API.Functions
         public string PhoneNumber { get; set; }
         public string EmailAddress { get; set; }
 
+        public Boolean IsActiveMember {get;set;}
         
     }
 

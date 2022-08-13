@@ -25,7 +25,7 @@ namespace IBAM.API.Models{
 
         public DateTime CreatedOn { get; set; } 
         public DateTime UpdatedOn { get; set; }
-        public Boolean IsActivemember { get; set; }
+        public Boolean IsActiveMember { get; set; }
           
     } 
 

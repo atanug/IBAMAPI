@@ -12,5 +12,8 @@ namespace IBAM.API.Data{
         public DbSet<State> States {get;set;}
         public DbSet<Member> Members{get;set;}
         public DbSet<User> Users{get;set;}
+        public DbSet<PaymentType> PaymentTypes{get;set;}
+        public DbSet<MembershipType> MembershipTypes{get;set;}
+        public DbSet<Membership> Memberships{get;set;}
     }
 }
