@@ -141,6 +141,7 @@ namespace IBAM.API.Functions
 
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();  
             var input = JsonConvert.DeserializeObject<Member>(requestBody); 
+            log.LogError(requestBody);
 
             MemberController _membercontroller = new MemberController(_context);
             Member member = new Member();
@@ -161,7 +162,7 @@ namespace IBAM.API.Functions
                 member.EmailAddress=input.EmailAddress;                
                 member.UpdatedOn=System.DateTime.Now;
 
-                _membercontroller.UpdateMember(member);
+                _membercontroller.UpdateMember(_membercontroller.GetMemberById(id));
 
                 resp = ConvertFromMember(member);
             }  
