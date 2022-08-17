@@ -162,9 +162,9 @@ namespace IBAM.API.Functions
                 member.EmailAddress=input.EmailAddress;                
                 member.UpdatedOn=System.DateTime.Now;
 
-                _membercontroller.UpdateMember(_membercontroller.GetMemberById(id));
+                _membercontroller.UpdateMember(member);
 
-                resp = ConvertFromMember(member);
+                resp = ConvertFromMember(_membercontroller.GetMemberById(id));
             }  
             catch (Exception e)  
             {  
