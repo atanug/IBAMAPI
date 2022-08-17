@@ -36,11 +36,15 @@ namespace IBAM.API.Controllers{
 
             return _context.Members
                 .Where(p => p.FirstName.ToLower().Contains(keyword) ||
-                 p.LastName.ToLower().Contains(keyword)).ToList();
+                 p.LastName.ToLower().Contains(keyword))
+                 .Include(i => i.State)
+                 .Include(c=>c.Country).ToList();
         }
 
         public Member GetMemberById(int memberId){
-            return _context.Members.Where(b=>b.MemberId==memberId).FirstOrDefault();
+            return _context.Members.Where(b=>b.MemberId==memberId)
+                .Include(i => i.State)
+                 .Include(c=>c.Country).FirstOrDefault();
         }
 
     }

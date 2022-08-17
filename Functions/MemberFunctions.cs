@@ -226,11 +226,7 @@ namespace IBAM.API.Functions
 
         private MemberReq ConvertFromMember(Member member)
         {
-            CountryController _countryController = new CountryController(_context);
-            Country country = _countryController.GetById(member.CountryId);
-
-            StateController _stateController = new StateController(_context);
-            State state = _stateController.getById(member.StateId);
+            
 
             MemberReq req = new MemberReq();
 
@@ -244,8 +240,10 @@ namespace IBAM.API.Functions
             req.PostalCode = member.PostalCode;
             req.EmailAddress = member.EmailAddress;
             req.PhoneNumber = member.PhoneNumber;
-            req.StateName = (state.StateName != null) ? state.StateName:"";
-            req.CountryName=(country.CountryName!=null)?country.CountryName:""; 
+            req.StateId=(member.State!=null)?member.StateId:0;
+            req.StateName = (member.State!=null)?member.State.StateName:"";
+            req.CountryId=(member.Country!=null)?member.Country.CountryId:0;
+            req.CountryName=(member.Country!=null)?member.Country.CountryName:"";
             req.IsActiveMember = member.IsActiveMember;
 
             return req;
@@ -266,11 +264,10 @@ namespace IBAM.API.Functions
         public string StreetAddress1{get;set;}
         public string StreetAddress2 { get; set; }
         public string City { get; set; }
-        
+        public int StateId { get; set; }
         public string StateName { get; set; }
-        public string CountryName { get; set; }
-
-        
+        public int CountryId { get; set; }
+        public string CountryName { get; set; }    
         public string PostalCode { get; set; }
         public string PhoneNumber { get; set; }
         public string EmailAddress { get; set; }
