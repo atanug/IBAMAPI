@@ -49,17 +49,13 @@ namespace IBAM.API.Functions
             }
 
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();  
-            var input = JsonConvert.DeserializeObject<MemberReq>(requestBody); 
+            var input = JsonConvert.DeserializeObject<Member>(requestBody); 
             log.LogError(requestBody);
             int memberId = 0;
             try  
             {  
 
-                CountryController _countryController = new CountryController(_context);
-                Country country = _countryController.GetByCountryName(input.CountryName);
-
-                StateController _stateController = new StateController(_context);
-                State state = _stateController.GetByStateName(input.StateName);
+                
 
                 Member member = new Member{
                     FirstName=input.FirstName,
@@ -68,8 +64,8 @@ namespace IBAM.API.Functions
                     StreetAddress2=input.StreetAddress2,
                     City=input.City,
                     PostalCode=input.PostalCode,
-                    StateId=state.StateId,
-                    CountryId=country.CountryId,
+                    StateId=Convert.ToInt16(input.StateId),
+                    CountryId=Convert.ToInt16(input.CountryId),
                     PhoneNumber=input.PhoneNumber,
                     EmailAddress=input.EmailAddress,                
                     
@@ -111,29 +107,7 @@ namespace IBAM.API.Functions
 
                 foreach (Member member in _controller.GetMembers(keyword))
                 {
-
-                     CountryController _countryController = new CountryController(_context);
-                     Country country = _countryController.GetById(member.CountryId);
-
-                    StateController _stateController = new StateController(_context);
-                    State state = _stateController.getById(member.StateId);
-
-                    MemberReq memberReq = new MemberReq{
-                        MemberId = member.MemberId,
-                        FirstName=member.FirstName,
-                        LastName=member.LastName,
-                        StreetAddress1 = member.StreetAddress1,
-                        StreetAddress2 = member.StreetAddress2,
-                        City = member.City,
-                        PostalCode = member.PostalCode,
-                        EmailAddress = member.EmailAddress,
-                        PhoneNumber = member.PhoneNumber,
-                        StateName = state.StateName,
-                        CountryName=country.CountryName ,
-                        IsActiveMember=member.IsActiveMember,    
-                    };
-
-                    MemberList.Add(memberReq);
+                    MemberList.Add(ConvertFromMember(member));
                 }
             }  
             catch (Exception e)  
@@ -166,35 +140,30 @@ namespace IBAM.API.Functions
             }
 
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();  
-            var input = JsonConvert.DeserializeObject<MemberReq>(requestBody); 
+            var input = JsonConvert.DeserializeObject<Member>(requestBody); 
 
             MemberController _membercontroller = new MemberController(_context);
-            CountryController _countryController = new CountryController(_context);
-            StateController _stateController = new StateController(_context);
             Member member = new Member();
             MemberReq resp = new MemberReq();
 
             try{
                  member = _membercontroller.GetMemberById(id);
 
-                Country country = _countryController.GetByCountryName(input.CountryName);
-                State state = _stateController.GetByStateName(input.StateName);
-
                 member.FirstName=input.FirstName;
-                    member.LastName = input.LastName;
-                    member.StreetAddress1=input.StreetAddress1;
-                    member.StreetAddress2=input.StreetAddress2;
-                    member.City=input.City;
-                    member.PostalCode=input.PostalCode;
-                    member.StateId=state.StateId;
-                    member.CountryId=country.CountryId;
-                    member.PhoneNumber=input.PhoneNumber;
-                    member.EmailAddress=input.EmailAddress;                
-                    member.UpdatedOn=System.DateTime.Now;
+                member.LastName = input.LastName;
+                member.StreetAddress1=input.StreetAddress1;
+                member.StreetAddress2=input.StreetAddress2;
+                member.City=input.City;
+                member.PostalCode=input.PostalCode;
+                member.StateId=Convert.ToInt16(input.StateId);
+                member.CountryId=Convert.ToInt16(input.CountryId);
+                member.PhoneNumber=input.PhoneNumber;
+                member.EmailAddress=input.EmailAddress;                
+                member.UpdatedOn=System.DateTime.Now;
 
-                    _membercontroller.UpdateMember(member);
+                _membercontroller.UpdateMember(member);
 
-                    resp = ConvertFromMember(member,country,state);
+                resp = ConvertFromMember(member);
             }  
             catch (Exception e)  
             {  
@@ -229,14 +198,10 @@ namespace IBAM.API.Functions
 
                 if (member!=null){
 
-                CountryController _countryController = new CountryController(_context);
-                Country country = _countryController.GetById(member.CountryId);
-
-                StateController _stateController = new StateController(_context);
-                State state = _stateController.getById(member.StateId);
+                
 
                 
-                    memberReq = ConvertFromMember(member, country,state);        
+                    memberReq = ConvertFromMember(member);        
                 }
                 else{
                     return ErrorResponse.NotFound(type: "invalid_member_id",detail:"Member Not Found");
@@ -259,25 +224,31 @@ namespace IBAM.API.Functions
             }  
         }
 
-        private MemberReq ConvertFromMember(Member member, Country country, State state)
+        private MemberReq ConvertFromMember(Member member)
         {
+            CountryController _countryController = new CountryController(_context);
+            Country country = _countryController.GetById(member.CountryId);
+
+            StateController _stateController = new StateController(_context);
+            State state = _stateController.getById(member.StateId);
+
             MemberReq req = new MemberReq();
 
             
-                req.MemberId = member.MemberId;
-                req.FirstName=member.FirstName;
-                req.LastName=member.LastName;
-                req.StreetAddress1 = member.StreetAddress1;
-                req.StreetAddress2 = member.StreetAddress2;
-                req.City = member.City;
-                req.PostalCode = member.PostalCode;
-                req.EmailAddress = member.EmailAddress;
-                req.PhoneNumber = member.PhoneNumber;
-                req.StateName = state.StateName;
-                req.CountryName=country.CountryName; 
-                req.IsActiveMember = member.IsActiveMember;
+            req.MemberId = member.MemberId;
+            req.FirstName=member.FirstName;
+            req.LastName=member.LastName;
+            req.StreetAddress1 = member.StreetAddress1;
+            req.StreetAddress2 = member.StreetAddress2;
+            req.City = member.City;
+            req.PostalCode = member.PostalCode;
+            req.EmailAddress = member.EmailAddress;
+            req.PhoneNumber = member.PhoneNumber;
+            req.StateName = (state.StateName != null) ? state.StateName:"";
+            req.CountryName=(country.CountryName!=null)?country.CountryName:""; 
+            req.IsActiveMember = member.IsActiveMember;
 
-                return req;
+            return req;
         } 
 
     }

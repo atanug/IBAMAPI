@@ -55,27 +55,23 @@ namespace IBAM.API.Functions
             try  
             {  
 
-                PaymentTypeController _pmtController = new PaymentTypeController(_context);
-                PaymentType pmtType = _pmtController.GetByDescription(input.PaymentType);
-
-                MembershipTypeController _memtypeController = new MembershipTypeController(_context);
-                MembershipType memtype = _memtypeController.GetByDesc(input.MembershipType);
+                
 
                 Membership membership = new Membership{
                     MemberId=input.MemberId,
                     Amount = input.Amount,
-                    PmtTypeId=pmtType.PaymentTypeId,
-                    
+                    PmtTypeId=Convert.ToInt16(input.PaymentType),
                     TransactionDate=System.DateTime.Now,
                     Comments=input.Comments,
-                    MembershipTypeId=memtype.MembershipTypeId,
+                    MembershipTypeId=Convert.ToInt16(input.MembershipType),
                     IsActive = true,                
-                    
                     CreatedOn=System.DateTime.Now,
                     UpdatedOn=System.DateTime.Now};
 
                 MembershipController _controller = new MembershipController(_context);
-                 membershipId = _controller.AddMembership(membership);
+                membershipId = _controller.AddMembership(membership);
+
+                
 
             }  
             catch (Exception e)  
