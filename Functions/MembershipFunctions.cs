@@ -49,7 +49,7 @@ namespace IBAM.API.Functions
             }
 
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();  
-            var input = JsonConvert.DeserializeObject<MembershipReq>(requestBody); 
+            var input = JsonConvert.DeserializeObject<Membership>(requestBody); 
             log.LogError(requestBody);
             int membershipId = 0;
             try  
@@ -58,15 +58,15 @@ namespace IBAM.API.Functions
                 
 
                 Membership membership = new Membership{
-                    MemberId=input.MemberId,
-                    Amount = input.Amount,
-                    PmtTypeId=Convert.ToInt16(input.PaymentType),
-                    TransactionDate=System.DateTime.Now,
-                    Comments=input.Comments,
-                    MembershipTypeId=Convert.ToInt16(input.MembershipType),
-                    IsActive = true,                
-                    CreatedOn=System.DateTime.Now,
-                    UpdatedOn=System.DateTime.Now};
+                MemberId=input.MemberId,
+                Amount = input.Amount,
+                PaymentTypeId=Convert.ToInt16(input.PaymentTypeId),
+                TransactionDate=System.DateTime.Now,
+                Comments=input.Comments,
+                MembershipTypeId=Convert.ToInt16(input.MembershipTypeId),
+                IsActive = true,                
+                CreatedOn=System.DateTime.Now,
+                UpdatedOn=System.DateTime.Now};
 
                 MembershipController _controller = new MembershipController(_context);
                 membershipId = _controller.AddMembership(membership);
@@ -82,7 +82,46 @@ namespace IBAM.API.Functions
             return new OkObjectResult(new { id=membershipId}); ;  
         }  
         
+        [FunctionName("GetMemberships")]
+        public  async Task<IActionResult> GetMembers(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "memberships/member/{id}")] HttpRequest req,
+            ILogger log, int id)
+        {
+            
+            // Check if we have authentication info.
+            AuthenticationInfo auth = new AuthenticationInfo(req);
         
+            if (!auth.IsValid)
+            {
+                return ErrorResponse.UnAuthorized(type:"authorization",detail:"Permission Denied"); 
+            }
+
+            List<Membership> MembershipList = new List<Membership>();  
+            try  
+            {  
+                MembershipController _controller = new MembershipController(_context);
+                
+
+                foreach (Membership membership in _controller.GetMembershipsbyMember(id))
+                {
+                    MembershipList.Add(membership);
+                }
+            }  
+            catch (Exception e)  
+            {  
+                log.LogError(e.ToString());
+                return ErrorResponse.InternalServerError(detail:"Internal Server Error. Please Contact System Adminstrator"); 
+            }  
+            if(MembershipList.Count > 0)  
+            {  
+                return new OkObjectResult(MembershipList);  
+            }  
+            else  
+            {  
+                return ErrorResponse.NotFound(type: "/notfound",detail:"Membership information Not Found");  
+            }  
+        }
+
         
 
     }

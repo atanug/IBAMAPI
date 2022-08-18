@@ -24,7 +24,16 @@ namespace IBAM.API.Controllers{
 
         }
 
+        public List<Membership> GetMembershipsbyMember(int memberId){
+           
 
+            return _context.Memberships
+                .Where(p => p.MemberId==memberId && p.IsActive==true)
+                 .Include(i => i.PaymentType)
+                 .Include(c=>c.MembershipType)
+                 .OrderByDescending(d=>d.TransactionDate)
+                 .ToList();
+        }
 
     }
 
