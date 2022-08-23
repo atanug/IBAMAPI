@@ -27,6 +27,7 @@ namespace IBAM.API.Controllers{
 
         public List<Registration> GetRegistrationsbyMember(int memberId){
            
+            
 
             return _context.Registrations
                 .Where(p => p.MemberId==memberId && p.IsActive==true)
