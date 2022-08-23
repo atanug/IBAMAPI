@@ -15,5 +15,10 @@ namespace IBAM.API.Data{
         public DbSet<PaymentType> PaymentTypes{get;set;}
         public DbSet<MembershipType> MembershipTypes{get;set;}
         public DbSet<Membership> Memberships{get;set;}
+        public DbSet<Event> Events{get;set;}
+        public DbSet<RegistrationType> RegistrationTypes{get;set;}
+        public DbSet<Registration> Registrations{get;set;}
+
+
     }
 }
