@@ -37,6 +37,15 @@ namespace IBAM.API.Controllers{
                  .ToList();
         }
 
+        public Registration UpdateRegistration(Registration registration){
+             _context.Registrations.Attach(registration);
+            _context.Entry(registration).State = EntityState.Modified;
+            _context.SaveChanges();
+            return registration;
+        }
+
+       
+
     }
 
 }
