@@ -74,7 +74,7 @@ namespace IBAM.API.Functions
 
         [FunctionName("CreateRegistration")]  
         public async Task<IActionResult> CreateRegistration(  
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "Registrations")] HttpRequest req, ILogger log)  
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "registrations")] HttpRequest req, ILogger log)  
         {  
 
             // Check if we have authentication info.
