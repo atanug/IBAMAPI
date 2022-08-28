@@ -67,7 +67,7 @@ namespace IBAM.API.Functions
                 log.LogError(e.ToString());  
                 return new BadRequestResult();  
             }  
-            return new OkResult();  
+            return new BadRequestResult();  
         }  
         
     }
