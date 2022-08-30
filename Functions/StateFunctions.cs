@@ -18,6 +18,7 @@ using Microsoft.EntityFrameworkCore;
 using IBAM.API.Models;
 using IBAM.API.Data;
 using IBAM.API.Controllers;
+using IBAM.API.Helper;
 
 
 namespace IBAM.API.Functions
@@ -69,6 +70,43 @@ namespace IBAM.API.Functions
             }  
             return new OkResult();  
         }  
+
+        [FunctionName("GetStates")]
+        public  async Task<IActionResult> GetStates(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "States")] HttpRequest req,
+            ILogger log)
+        {
+            
+            // Check if we have authentication info.
+            AuthenticationInfo auth = new AuthenticationInfo(req);
+        
+            if (!auth.IsValid)
+            {
+                return ErrorResponse.UnAuthorized(type:"authorization",detail:"Permission Denied"); 
+            }
+
+            List<State> States = new List<State>();  
+            try  
+            {  
+                StateController _controller = new StateController(_context);
+                
+                States = _controller.GetStates();
+                
+            }  
+            catch (Exception e)  
+            {  
+                log.LogError(e.ToString());
+                return ErrorResponse.InternalServerError(detail:"Internal Server Error. Please Contact System Adminstrator"); 
+            }  
+            if(States.Count > 0)  
+            {  
+                return new OkObjectResult(States);  
+            }  
+            else  
+            {  
+                return ErrorResponse.NotFound(type: "/notfound",detail:"States Not Found");  
+            }  
+        }
         
     }
 

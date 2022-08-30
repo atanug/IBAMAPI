@@ -1,6 +1,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Collections.Generic;
 
 using IBAM.API.Data;
 using IBAM.API.Models;
@@ -20,6 +21,11 @@ namespace IBAM.API.Controllers{
             _context.Countries.Add(country);
             _context.SaveChanges();
 
+        }
+
+        public List<Country> GetCountries(){
+            return _context.Countries
+                .Where(p => p.IsActive==true).ToList();
         }
 
         public Country GetByCountryName(String countryName){

@@ -21,6 +21,7 @@ using Microsoft.EntityFrameworkCore;
 using IBAM.API.Models;
 using IBAM.API.Data;
 using IBAM.API.Controllers;
+using IBAM.API.Helper;
 
 
 namespace IBAM.API.Functions
@@ -60,6 +61,43 @@ namespace IBAM.API.Functions
             }  
             return new OkResult();  
         } 
+
+        [FunctionName("GetCountries")]
+        public  async Task<IActionResult> GetCountries(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Countries")] HttpRequest req,
+            ILogger log)
+        {
+            
+            // Check if we have authentication info.
+            AuthenticationInfo auth = new AuthenticationInfo(req);
+        
+            if (!auth.IsValid)
+            {
+                return ErrorResponse.UnAuthorized(type:"authorization",detail:"Permission Denied"); 
+            }
+
+            List<Country> Countries = new List<Country>();  
+            try  
+            {  
+                CountryController _controller = new CountryController(_context);
+                
+                Countries = _controller.GetCountries();
+                
+            }  
+            catch (Exception e)  
+            {  
+                log.LogError(e.ToString());
+                return ErrorResponse.InternalServerError(detail:"Internal Server Error. Please Contact System Adminstrator"); 
+            }  
+            if(Countries.Count > 0)  
+            {  
+                return new OkObjectResult(Countries);  
+            }  
+            else  
+            {  
+                return ErrorResponse.NotFound(type: "/notfound",detail:"Countries Not Found");  
+            }  
+        }
 
         
     }

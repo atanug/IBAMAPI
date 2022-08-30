@@ -1,6 +1,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Collections.Generic;
 
 using IBAM.API.Data;
 using IBAM.API.Models;
@@ -20,6 +21,11 @@ namespace IBAM.API.Controllers{
             _context.States.Add(state);
             _context.SaveChanges();
 
+        }
+
+        public List<State> GetStates(){
+            return _context.States
+                .Where(p => p.IsActive==true).ToList();
         }
 
         public State GetByStateName(String stateName){
