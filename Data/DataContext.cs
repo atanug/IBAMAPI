@@ -1,8 +1,27 @@
 using Microsoft.EntityFrameworkCore;
 using IBAM.API.Models;
+using Microsoft.Extensions.Logging;
+using System;
 
 namespace IBAM.API.Data{
     public class DataContext : DbContext{
+
+        public static readonly ILoggerFactory MyLoggerFactory =
+   LoggerFactory.Create(
+        builder =>
+          {
+              builder.AddConsole();
+           }
+   );
+
+
+ protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    => optionsBuilder
+        .UseLoggerFactory(MyLoggerFactory)
+        .EnableSensitiveDataLogging(true)
+        .UseSqlServer(Environment.GetEnvironmentVariable("SqlConnectionString"));
+    
+
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
             
@@ -18,6 +37,7 @@ namespace IBAM.API.Data{
         public DbSet<Event> Events{get;set;}
         public DbSet<RegistrationType> RegistrationTypes{get;set;}
         public DbSet<Registration> Registrations{get;set;}
+        public DbSet<Expense> Expenses{get;set;}
 
 
     }
