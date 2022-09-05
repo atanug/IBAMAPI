@@ -38,6 +38,7 @@ namespace IBAM.API.Data{
         public DbSet<RegistrationType> RegistrationTypes{get;set;}
         public DbSet<Registration> Registrations{get;set;}
         public DbSet<Expense> Expenses{get;set;}
+        public DbSet<ExpenseType> ExpenseTypes{get;set;}
 
 
     }

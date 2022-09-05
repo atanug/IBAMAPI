@@ -35,7 +35,7 @@ namespace IBAM.API.Controllers{
            
 
             return _context.Members
-                .Where(p => p.FirstName.ToLower().Contains(keyword) ||
+                .Where(p => (keyword=="ALL") || p.FirstName.ToLower().Contains(keyword) ||
                  p.LastName.ToLower().Contains(keyword))
                  .Include(i => i.State)
                  .Include(c=>c.Country).ToList();

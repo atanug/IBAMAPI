@@ -32,13 +32,14 @@ namespace IBAM.API.Controllers{
             return expense;
         }
 
-        public List<Expense> GetExpenses(int? eventId, int? memberId){
+        public List<Expense> GetExpenses(int? eventId){
            
 
             var query= _context.Expenses
-                .Where(p=> (eventId==null ||  p.EventId==eventId) && (memberId==null ||  p.MemberId==memberId) && p.IsActive==true)
+                .Where(p=> (eventId==null ||  p.EventId==eventId)  && p.IsActive==true)
                  .Include(i => i.Event)
-                 .Include(c=>c.Member);
+                 .Include(e=>e.ExpenseType);
+                 
 
                  
 

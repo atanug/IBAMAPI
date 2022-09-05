@@ -9,8 +9,9 @@ namespace IBAM.API.Models{
         public int ExpenseId { get; set; }  
 
         public string ExpenseDescription { get; set; }
-        public int MemberId { get; set; }
-        public Member Member { get; set; }
+        public int ExpenseTypeId { get; set; }
+        public ExpenseType ExpenseType { get; set; }
+        public string PaidBy { get; set; }
         public decimal Amount { get; set; }
         public int EventId { get; set; }
         public Event Event { get; set; }

@@ -50,16 +50,19 @@ namespace IBAM.API.Functions
             }
 
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();  
-            var input = JsonConvert.DeserializeObject<Expense>(requestBody); 
+            var input = JsonConvert.DeserializeObject<ExpenseReq>(requestBody); 
             log.LogError(requestBody);
             int expenseId = 0;
             try  
             {  
+                UserController _usercontroller = new UserController(_context);
+                User user = _usercontroller.GetByUserEmail(input.UserEmail);
 
-
+                
                 Expense expense = new Expense{
                 ExpenseDescription=input.ExpenseDescription,    
-                MemberId=input.MemberId,
+                ExpenseTypeId=input.ExpenseTypeId,
+                PaidBy=input.PaidBy,
                 Amount = input.Amount,
                 EventId=Convert.ToInt16(input.EventId),
                 ExpenseDate=Convert.ToDateTime(input.ExpenseDate),
@@ -67,9 +70,9 @@ namespace IBAM.API.Functions
                 Reimbursed=input.Reimbursed,
                 IsActive = true,                
                 CreatedOn=System.DateTime.Now,
-                CreatedBy=input.CreatedBy,
+                CreatedBy=user.UserId,
                 UpdatedOn=System.DateTime.Now,
-                UpdatedBy=input.UpdatedBy};
+                UpdatedBy=user.UserId};
 
                 ExpenseController _controller = new ExpenseController(_context);
                 expenseId = _controller.AddExpense(expense);
@@ -108,15 +111,13 @@ namespace IBAM.API.Functions
              eventId = Convert.ToInt16(req.Query["eventid"]);
             }
 
-            if (req.Query["memberId"].ToString().Trim()!="") {
-             memberId = Convert.ToInt16(req.Query["memberId"]);
-            }
+            
             try  
             {  
                 ExpenseController _controller = new ExpenseController(_context);
                 
 
-                foreach (Expense expense in _controller.GetExpenses(eventId, memberId))
+                foreach (Expense expense in _controller.GetExpenses(eventId))
                 {
                     ExpenseList.Add(expense);
                 }
@@ -140,5 +141,30 @@ namespace IBAM.API.Functions
 
     }
 
+public class ExpenseReq 
+    {  
+        
+        public int ExpenseId { get; set; }  
+
+        public string ExpenseDescription { get; set; }
+        public int ExpenseTypeId { get; set; }
+        public string PaidBy { get; set; }
+        public decimal Amount { get; set; }
+        public int EventId { get; set; }
+        public Event Event { get; set; }
+        public DateTime ExpenseDate { get; set; }
+        public string Comments { get; set; }
+        public Boolean Reimbursed { get; set; }
+
+        
+        public Boolean IsActive { get; set; }
+        public DateTime CreatedOn { get; set; } 
+        public int CreatedBy { get; set; }
+        public DateTime UpdatedOn { get; set; }
+        public int UpdatedBy { get; set; }
+
+        public string UserEmail { get; set; }
+
+    }
     
 }

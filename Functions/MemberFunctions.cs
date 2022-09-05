@@ -88,7 +88,7 @@ namespace IBAM.API.Functions
         [FunctionName("GetMembers")]
         public  async Task<IActionResult> GetMembers(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "members/KEY/{keyword}")] HttpRequest req,
-            ILogger log, string keyword)
+            ILogger log, string? keyword)
         {
             
             // Check if we have authentication info.
