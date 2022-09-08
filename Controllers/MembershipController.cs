@@ -24,6 +24,14 @@ namespace IBAM.API.Controllers{
 
         }
 
+
+        public Membership UpdateMembership(Membership membership){
+            _context.Memberships.Attach(membership);
+            _context.Entry(membership).State = EntityState.Modified;
+            _context.SaveChanges();
+            return membership;
+        }
+
         public List<Membership> GetMembershipsbyMember(int memberId){
            
 

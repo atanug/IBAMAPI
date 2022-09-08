@@ -50,6 +50,11 @@ namespace IBAM.API.Controllers{
                  
         }
 
+        public Expense GetExpenseById(int expenseId){
+            return _context.Expenses.Where(b=>b.ExpenseId==expenseId && b.IsActive==true)
+                .Include(i => i.Event)
+                 .Include(e=>e.ExpenseType).FirstOrDefault();
+        }
 
 
     }

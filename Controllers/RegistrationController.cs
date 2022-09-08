@@ -25,6 +25,13 @@ namespace IBAM.API.Controllers{
 
         }
 
+        public Registration UpdateRegistration(Registration registration){
+            _context.Registrations.Attach(registration);
+            _context.Entry(registration).State = EntityState.Modified;
+            _context.SaveChanges();
+            return registration;
+        }
+
         public List<Registration> GetRegistrationsbyMember(int memberId){
            
             
@@ -38,13 +45,7 @@ namespace IBAM.API.Controllers{
                  .ToList();
         }
 
-        public Registration UpdateRegistration(Registration registration){
-             _context.Registrations.Attach(registration);
-            _context.Entry(registration).State = EntityState.Modified;
-            _context.SaveChanges();
-            return registration;
-        }
-
+        
        
 
     }

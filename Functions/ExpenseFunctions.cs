@@ -137,7 +137,104 @@ namespace IBAM.API.Functions
             }  
         }
 
+        [FunctionName("UpdateExpense")]  
+        public async Task<IActionResult> UpdateExpense(  
+            [HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "expenses/{id}")] HttpRequest req, 
+            ILogger log, int id)  
+        {  
+
+            // Check if we have authentication info.
+            AuthenticationInfo auth = new AuthenticationInfo(req);
         
+            if (!auth.IsValid)
+            {
+                return ErrorResponse.UnAuthorized(type:"authorization",detail:"Permission Denied"); 
+            }
+
+            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();  
+            var input = JsonConvert.DeserializeObject<ExpenseReq>(requestBody); 
+            log.LogError(requestBody);
+
+            ExpenseController _expensecontroller = new ExpenseController(_context);
+            Expense expense = new Expense();
+
+            
+            
+
+            try{
+
+                UserController _usercontroller = new UserController(_context);
+                User user = _usercontroller.GetByUserEmail(input.UserEmail);
+
+
+                expense = _expensecontroller.GetExpenseById(id);
+
+                expense.ExpenseDescription=input.ExpenseDescription;   
+                expense.ExpenseTypeId=input.ExpenseTypeId;
+                expense.PaidBy=input.PaidBy;
+                expense.Amount = input.Amount;
+                expense.EventId=Convert.ToInt16(input.EventId);
+                expense.ExpenseDate=Convert.ToDateTime(input.ExpenseDate);
+                expense.Comments=input.Comments;
+                expense.Reimbursed=input.Reimbursed;
+                expense.IsActive = true ;              
+                
+                expense.UpdatedOn=System.DateTime.Now;
+                expense.UpdatedBy=user.UserId;
+
+                _expensecontroller.UpdateExpense(expense);
+
+                
+            }  
+            catch (Exception e)  
+            {  
+                log.LogError(e.ToString());  
+                return ErrorResponse.BadRequest(type:"updateexpense",detail:"Error Updating Member. Please contact system adminstrator."); 
+            } 
+
+            
+            
+            return new OkObjectResult(_expensecontroller.GetExpenseById(id));
+        }
+
+        [FunctionName("GetExpenseById")]
+        public  async Task<IActionResult> GetExpenseById(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "expenses/{id}")] HttpRequest req,
+            ILogger log, int id)
+        {
+            // Check if we have authentication info.
+            AuthenticationInfo auth = new AuthenticationInfo(req);
+        
+            if (!auth.IsValid)
+            {
+                return ErrorResponse.UnAuthorized(type:"authorization",detail:"Permission Denied"); 
+            }
+            
+            Expense expense = new Expense();
+            
+            try  
+            {  
+                ExpenseController _controller = new ExpenseController(_context);
+
+                expense = _controller.GetExpenseById(id);
+
+                if (expense==null){
+
+                
+                    return ErrorResponse.NotFound(type: "invalid_expense_id",detail:"Expense Not Found");
+                      
+                }
+  
+            }  
+            catch (Exception e)  
+            {  
+                log.LogError(e.ToString());  
+                return ErrorResponse.InternalServerError(detail:"Internal Server Error. Please Contact System Adminstrator");
+            }  
+                return new OkObjectResult(expense);  
+              
+        }
+
 
     }
 

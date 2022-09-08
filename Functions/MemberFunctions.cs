@@ -40,13 +40,13 @@ namespace IBAM.API.Functions
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "members")] HttpRequest req, ILogger log)  
         {  
 
-            // Check if we have authentication info.
-            AuthenticationInfo auth = new AuthenticationInfo(req);
+            // // Check if we have authentication info.
+            // AuthenticationInfo auth = new AuthenticationInfo(req);
         
-            if (!auth.IsValid)
-            {
-                return ErrorResponse.UnAuthorized(type:"authorization",detail:"Permission Denied"); 
-            }
+            // if (!auth.IsValid)
+            // {
+            //     return ErrorResponse.UnAuthorized(type:"authorization",detail:"Permission Denied"); 
+            // }
 
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();  
             var input = JsonConvert.DeserializeObject<Member>(requestBody); 
@@ -92,12 +92,12 @@ namespace IBAM.API.Functions
         {
             
             // Check if we have authentication info.
-            AuthenticationInfo auth = new AuthenticationInfo(req);
+            // AuthenticationInfo auth = new AuthenticationInfo(req);
         
-            if (!auth.IsValid)
-            {
-                return ErrorResponse.UnAuthorized(type:"authorization",detail:"Permission Denied"); 
-            }
+            // if (!auth.IsValid)
+            // {
+            //     return ErrorResponse.UnAuthorized(type:"authorization",detail:"Permission Denied"); 
+            // }
 
             List<MemberReq> MemberList = new List<MemberReq>();  
             try  
@@ -132,12 +132,12 @@ namespace IBAM.API.Functions
         {  
 
             // Check if we have authentication info.
-            AuthenticationInfo auth = new AuthenticationInfo(req);
+            // AuthenticationInfo auth = new AuthenticationInfo(req);
         
-            if (!auth.IsValid)
-            {
-                return ErrorResponse.UnAuthorized(type:"authorization",detail:"Permission Denied"); 
-            }
+            // if (!auth.IsValid)
+            // {
+            //     return ErrorResponse.UnAuthorized(type:"authorization",detail:"Permission Denied"); 
+            // }
 
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();  
             var input = JsonConvert.DeserializeObject<Member>(requestBody); 
@@ -182,12 +182,12 @@ namespace IBAM.API.Functions
             ILogger log, int id)
         {
             // Check if we have authentication info.
-            AuthenticationInfo auth = new AuthenticationInfo(req);
+            // AuthenticationInfo auth = new AuthenticationInfo(req);
         
-            if (!auth.IsValid)
-            {
-                return ErrorResponse.UnAuthorized(type:"authorization",detail:"Permission Denied"); 
-            }
+            // if (!auth.IsValid)
+            // {
+            //     return ErrorResponse.UnAuthorized(type:"authorization",detail:"Permission Denied"); 
+            // }
             
             MemberReq memberReq = new MemberReq();
             

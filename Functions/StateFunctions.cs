@@ -78,12 +78,12 @@ namespace IBAM.API.Functions
         {
             
             // Check if we have authentication info.
-            AuthenticationInfo auth = new AuthenticationInfo(req);
+            // AuthenticationInfo auth = new AuthenticationInfo(req);
         
-            if (!auth.IsValid)
-            {
-                return ErrorResponse.UnAuthorized(type:"authorization",detail:"Permission Denied"); 
-            }
+            // if (!auth.IsValid)
+            // {
+            //     return ErrorResponse.UnAuthorized(type:"authorization",detail:"Permission Denied"); 
+            // }
 
             List<State> States = new List<State>();  
             try  
