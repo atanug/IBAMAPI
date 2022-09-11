@@ -9,6 +9,7 @@ namespace IBAM.API.Models{
         public int RegistrationId { get; set; }  
 
         public int MemberId { get; set; }
+        public Member Member { get; set; }
         public int RegistrationTypeId { get; set; }
         public RegistrationType RegistrationType { get; set; }
         public decimal Amount { get; set; }

@@ -189,7 +189,7 @@ namespace IBAM.API.Functions
             catch (Exception e)  
             {  
                 log.LogError(e.ToString());  
-                return ErrorResponse.BadRequest(type:"updateexpense",detail:"Error Updating Member. Please contact system adminstrator."); 
+                return ErrorResponse.BadRequest(type:"updateexpense",detail:"Error Updating Expense Data. Please contact system adminstrator."); 
             } 
 
             

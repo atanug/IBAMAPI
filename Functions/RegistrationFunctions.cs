@@ -118,6 +118,98 @@ namespace IBAM.API.Functions
             return new OkObjectResult(new { id=registrationId}); ;  
         }  
 
+        [FunctionName("UpdateRegistration")]  
+        public async Task<IActionResult> UpdateRegistration(  
+            [HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "registrations/{id}")] HttpRequest req, 
+            ILogger log, int id)  
+        {  
+
+            // Check if we have authentication info.
+            AuthenticationInfo auth = new AuthenticationInfo(req);
+        
+            if (!auth.IsValid)
+            {
+                return ErrorResponse.UnAuthorized(type:"authorization",detail:"Permission Denied"); 
+            }
+
+            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();  
+            var input = JsonConvert.DeserializeObject<Registration>(requestBody); 
+            log.LogError(requestBody);
+
+            RegistrationController _registrationcontroller = new RegistrationController(_context);
+            Registration registration = new Registration();
+            
+
+            try{
+
+                
+
+                registration = _registrationcontroller.GetRegistrationbyId(id);
+
+                registration.MemberId=Convert.ToInt32(input.MemberId);
+                    registration.RegistrationTypeId = Convert.ToInt16(input.RegistrationTypeId);
+                    registration.Amount = Convert.ToDecimal(input.Amount);
+                    registration.PaymentTypeId = Convert.ToInt16(input.PaymentTypeId);
+                    
+                    registration.NoOfPeople = Convert.ToInt16(input.NoOfPeople);
+                    registration.Comments=input.Comments;      
+                  
+                    registration.UpdatedOn=System.DateTime.Now;
+                    
+
+                _registrationcontroller.UpdateRegistration(registration);
+
+                
+            }  
+            catch (Exception e)  
+            {  
+                log.LogError(e.ToString());  
+                return ErrorResponse.BadRequest(type:"updateregistration",detail:"Error Updating Registration. Please contact system adminstrator."); 
+            } 
+
+            
+            
+            return new OkObjectResult(_registrationcontroller.GetRegistrationbyId(id));
+        }
+
+        [FunctionName("GetRegistrationById")]
+        public  async Task<IActionResult> GetRegistrationById(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "registrations/{id}")] HttpRequest req,
+            ILogger log, int id)
+        {
+            // Check if we have authentication info.
+            AuthenticationInfo auth = new AuthenticationInfo(req);
+        
+            if (!auth.IsValid)
+            {
+                return ErrorResponse.UnAuthorized(type:"authorization",detail:"Permission Denied"); 
+            }
+            
+            Registration registration = new Registration();
+            
+            try  
+            {  
+                RegistrationController _controller = new RegistrationController(_context);
+
+                registration = _controller.GetRegistrationbyId(id);
+
+                if (registration==null){
+
+                
+                    return ErrorResponse.NotFound(type: "invalid_registration_id",detail:"Registration Not Found");
+                      
+                }
+  
+            }  
+            catch (Exception e)  
+            {  
+                log.LogError(e.ToString());  
+                return ErrorResponse.InternalServerError(detail:"Internal Server Error. Please Contact System Adminstrator");
+            }  
+                return new OkObjectResult(registration);  
+              
+        }
+
     }
         
 

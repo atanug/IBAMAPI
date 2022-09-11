@@ -45,7 +45,18 @@ namespace IBAM.API.Controllers{
                  .ToList();
         }
 
-        
+        public Registration GetRegistrationbyId(int registrationId){
+           
+            
+
+            return _context.Registrations
+                .Where(p => p.RegistrationId==registrationId && p.IsActive==true)
+                 .Include(m=>m.Member)
+                 .Include(i => i.PaymentType)
+                 .Include(c=>c.RegistrationType)
+                 .ThenInclude(x => x.Event)
+                 .FirstOrDefault();
+        }
        
 
     }
