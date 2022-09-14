@@ -9,6 +9,7 @@ namespace IBAM.API.Models{
         public int MembershipId { get; set; }  
 
         public int MemberId { get; set; }
+        public Member Member { get; set; }
         public decimal Amount { get; set; }
         public int PaymentTypeId { get; set; }
         public PaymentType PaymentType{get;set;}

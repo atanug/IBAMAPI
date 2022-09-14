@@ -83,7 +83,7 @@ namespace IBAM.API.Functions
         }  
         
         [FunctionName("GetMemberships")]
-        public  async Task<IActionResult> GetMembers(
+        public  async Task<IActionResult> GetMemberships(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "memberships/member/{id}")] HttpRequest req,
             ILogger log, int id)
         {
@@ -122,7 +122,91 @@ namespace IBAM.API.Functions
             }  
         }
 
+        [FunctionName("UpdateMembership")]  
+        public async Task<IActionResult> UpdateMembership(  
+            [HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "memberships/{id}")] HttpRequest req, 
+            ILogger log, int id)  
+        {  
+
+            // Check if we have authentication info.
+            AuthenticationInfo auth = new AuthenticationInfo(req);
         
+            if (!auth.IsValid)
+            {
+                return ErrorResponse.UnAuthorized(type:"authorization",detail:"Permission Denied"); 
+            }
+
+            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();  
+            var input = JsonConvert.DeserializeObject<Membership>(requestBody); 
+            log.LogError(requestBody);
+
+            MembershipController _membershipcontroller = new MembershipController(_context);
+            Membership membership = new Membership();
+            
+
+            try{
+
+                membership = _membershipcontroller.GetMembershipsbyId(id);
+
+                membership.MemberId=input.MemberId;
+                membership.Amount = input.Amount;
+                membership.PaymentTypeId=Convert.ToInt16(input.PaymentTypeId);
+                membership.TransactionDate=System.DateTime.Now;
+                membership.Comments=input.Comments;
+                membership.MembershipTypeId=Convert.ToInt16(input.MembershipTypeId);
+                membership.IsActive = true;                
+                membership.UpdatedOn=System.DateTime.Now;
+                    
+
+                _membershipcontroller.UpdateMembership(membership);
+                
+            }  
+            catch (Exception e)  
+            {  
+                log.LogError(e.ToString());  
+                return ErrorResponse.BadRequest(type:"updatemembership",detail:"Error Updating Membership. Please contact system adminstrator."); 
+            } 
+            return new OkObjectResult(_membershipcontroller.GetMembershipsbyId(id));
+        }
+
+        [FunctionName("GetMembershipById")]
+        public  async Task<IActionResult> GetMembershipById(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "memberships/{id}")] HttpRequest req,
+            ILogger log, int id)
+        {
+            // Check if we have authentication info.
+            AuthenticationInfo auth = new AuthenticationInfo(req);
+        
+            if (!auth.IsValid)
+            {
+                return ErrorResponse.UnAuthorized(type:"authorization",detail:"Permission Denied"); 
+            }
+            
+            Membership membership = new Membership();
+            
+            try  
+            {  
+                MembershipController _controller = new MembershipController(_context);
+
+                membership = _controller.GetMembershipsbyId(id);
+
+                if (membership==null){
+
+                
+                    return ErrorResponse.NotFound(type: "invalid_membership_id",detail:"Membership Not Found");
+                      
+                }
+  
+            }  
+            catch (Exception e)  
+            {  
+                log.LogError(e.ToString());  
+                return ErrorResponse.InternalServerError(detail:"Internal Server Error. Please Contact System Adminstrator");
+            }  
+                return new OkObjectResult(membership);  
+              
+        }
+
 
     }
 

@@ -43,6 +43,17 @@ namespace IBAM.API.Controllers{
                  .ToList();
         }
 
+        public Membership GetMembershipsbyId(int membershipId){
+           
+
+            return _context.Memberships
+                .Where(p => p.MembershipId==membershipId && p.IsActive==true)
+                 .Include(i => i.PaymentType)
+                 .Include(c=>c.MembershipType)
+                 .Include (m=>m.Member)
+                 .FirstOrDefault();
+        }
+
     }
 
 }
