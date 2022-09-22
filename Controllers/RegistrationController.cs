@@ -18,6 +18,17 @@ namespace IBAM.API.Controllers{
             this._context = _context;
         }
 
+        // public Boolean RegistrationExists(int MemberId, int EventId){
+
+        //     Registration r = new Registration();
+
+        //     r= _context.Registrations
+        //         .Where(p => p.EventId==EventId && p.MemberId == MemberId && p.IsActive==true)
+        //          .FirstOrDefault();
+
+        //     return (r==null ? false:true);
+        // }
+
         public int AddRegistration(Registration registration){
             _context.Registrations.Add(registration);
             _context.SaveChanges();

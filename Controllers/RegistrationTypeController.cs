@@ -39,6 +39,21 @@ namespace IBAM.API.Controllers{
             
         }
 
+        public int AddRegistrationType(RegistrationType x) {
+
+            _context.RegistrationTypes.Add(x);
+            _context.SaveChanges();
+            return x.RegistrationTypeId;
+
+        }
+
+        public RegistrationType UpdateRegistrationType(RegistrationType x){
+            _context.RegistrationTypes.Attach(x);
+            _context.Entry(x).State = EntityState.Modified;
+            _context.SaveChanges();
+            return x;
+        }
+
     }
 
 }

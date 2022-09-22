@@ -21,7 +21,9 @@ namespace IBAM.API.Controllers{
 
         public List<Event> getEvents(){
             return _context.Events
-                .Where(p => p.IsActive==true).ToList();
+                .Where(p => p.IsActive==true).
+                Include(r=>r.RegistrationTypes).
+                ToList();
         }
 
         public Event GetByDescription(String desc){
@@ -32,8 +34,25 @@ namespace IBAM.API.Controllers{
 
         public Event GetById(int eventId){
             
-            return _context.Events.Where(b => b.EventId == eventId).FirstOrDefault();
+            return _context.Events.Where(b => b.EventId == eventId).
+            Include(r=>r.RegistrationTypes).
+            FirstOrDefault();
             
+        }
+
+        public int AddEvent(Event x) {
+
+            _context.Events.Add(x);
+            _context.SaveChanges();
+            return x.EventId;
+
+        }
+
+        public Event UpdateEvent(Event x){
+             _context.Events.Attach(x);
+            _context.Entry(x).State = EntityState.Modified;
+            _context.SaveChanges();
+            return x;
         }
 
     }

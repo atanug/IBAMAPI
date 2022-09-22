@@ -19,7 +19,7 @@ namespace IBAM.API
             builder.Services.AddDbContext<IBAM.API.Data.DataContext>(
               options => SqlServerDbContextOptionsExtensions.UseSqlServer(options, connectionString));
 
-              
+                      
         }
 
     }

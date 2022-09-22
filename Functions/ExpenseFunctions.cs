@@ -129,6 +129,7 @@ namespace IBAM.API.Functions
             }  
             if(ExpenseList.Count > 0)  
             {  
+                
                 return new OkObjectResult(ExpenseList);  
             }  
             else  

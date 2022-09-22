@@ -16,6 +16,6 @@ namespace IBAM.API.Models{
         public DateTime CreatedOn { get; set; } 
         public DateTime UpdatedOn { get; set; }
         
-          public ICollection<State> States { get; set; }
+        public ICollection<State> States { get; set; }
     } 
 }

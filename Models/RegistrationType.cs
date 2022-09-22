@@ -1,8 +1,10 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace IBAM.API.Models{
+     
     public class RegistrationType 
     {  
         

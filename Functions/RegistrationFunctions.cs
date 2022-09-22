@@ -7,6 +7,7 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System.Net;
 
 using System.Collections.Generic;
@@ -36,7 +37,7 @@ namespace IBAM.API.Functions
         
         
         [FunctionName("GetRegistrationByMember")]
-        public  async Task<IActionResult> GetRegistrationByEvent(
+        public  async Task<IActionResult> GetRegistrationsByMember(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "members/registration/{memberId}")] HttpRequest req,
             ILogger log, int memberId)
         {
@@ -64,7 +65,14 @@ namespace IBAM.API.Functions
             }  
             if(RegistrationList.Count > 0)  
             {  
-                return new OkObjectResult(RegistrationList);  
+                var resp = JsonConvert.SerializeObject(RegistrationList, Formatting.Indented,
+                        new JsonSerializerSettings()
+                        { 
+                            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                            ContractResolver = new CamelCasePropertyNamesContractResolver()
+                        });
+
+                return new OkObjectResult(resp);  
             }  
             else  
             {  
@@ -89,8 +97,11 @@ namespace IBAM.API.Functions
             var input = JsonConvert.DeserializeObject<Registration>(requestBody); 
             log.LogError(requestBody);
             int registrationId = 0;
+
+
             try  
             {  
+                RegistrationController _controller = new RegistrationController(_context);
 
                 
 
@@ -106,7 +117,7 @@ namespace IBAM.API.Functions
                     UpdatedOn=System.DateTime.Now,
                     IsActive = true};
 
-                RegistrationController _controller = new RegistrationController(_context);
+                
                 registrationId = _controller.AddRegistration(Registration);
 
             }  
@@ -167,9 +178,14 @@ namespace IBAM.API.Functions
                 return ErrorResponse.BadRequest(type:"updateregistration",detail:"Error Updating Registration. Please contact system adminstrator."); 
             } 
 
+            var resp = JsonConvert.SerializeObject(_registrationcontroller.GetRegistrationbyId(id), Formatting.Indented,
+                        new JsonSerializerSettings()
+                        { 
+                            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                            ContractResolver = new CamelCasePropertyNamesContractResolver()
+                        });
             
-            
-            return new OkObjectResult(_registrationcontroller.GetRegistrationbyId(id));
+            return new OkObjectResult(resp);
         }
 
         [FunctionName("GetRegistrationById")]
@@ -206,7 +222,14 @@ namespace IBAM.API.Functions
                 log.LogError(e.ToString());  
                 return ErrorResponse.InternalServerError(detail:"Internal Server Error. Please Contact System Adminstrator");
             }  
-                return new OkObjectResult(registration);  
+                var resp = JsonConvert.SerializeObject(registration, Formatting.Indented,
+                        new JsonSerializerSettings()
+                        { 
+                            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                            ContractResolver = new CamelCasePropertyNamesContractResolver()
+                        });
+
+                return new OkObjectResult(resp);  
               
         }
 

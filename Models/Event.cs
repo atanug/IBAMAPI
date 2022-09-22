@@ -1,8 +1,10 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace IBAM.API.Models{
+    //[JsonObject(IsReference = true)] 
     public class Event 
     {  
         
@@ -12,6 +14,9 @@ namespace IBAM.API.Models{
         public DateTime EventStartDate { get; set; }
         public DateTime EventEndDate { get; set; }
         public string EventDescription { get; set; }
+
+        
+        public ICollection<RegistrationType> RegistrationTypes { get; set; }
 
       
         public Boolean IsActive { get; set; }
