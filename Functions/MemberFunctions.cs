@@ -171,6 +171,7 @@ namespace IBAM.API.Functions
                 log.LogError(e.ToString());  
                 return ErrorResponse.BadRequest(type:"updatemember",detail:"Error Updating Member. Please contact system adminstrator."); 
             }  
+            //return ErrorResponse.NotFound(type: "/notfound",detail:"Member Not Found");
             return new OkObjectResult(resp);
         }
 
